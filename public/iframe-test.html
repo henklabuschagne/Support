@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HelpDesk Pro - Iframe Embedding Test</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f3f4f6;
+    }
+
+    .header {
+      background: #1f2937;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ef4444;
+      animation: pulse 2s infinite;
+    }
+
+    .indicator.ready {
+      background: #10b981;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .container {
+      display: flex;
+      height: calc(100vh - 60px);
+    }
+
+    .sidebar {
+      width: 300px;
+      background: white;
+      border-right: 1px solid #e5e7eb;
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #111827;
+    }
+
+    .sidebar section {
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar section h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      padding: 0.625rem 1rem;
+      margin-bottom: 0.5rem;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .button:hover {
+      background: #2563eb;
+    }
+
+    .button.secondary {
+      background: white;
+      color: #374151;
+      border: 1px solid #d1d5db;
+    }
+
+    .button.secondary:hover {
+      background: #f9fafb;
+    }
+
+    .log {
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 0.75rem;
+      border-radius: 0.375rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 0.5rem;
+    }
+
+    .log-entry {
+      padding: 0.25rem 0;
+      border-bottom: 1px solid #374151;
+    }
+
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+
+    .log-time {
+      color: #9ca3af;
+      margin-right: 0.5rem;
+    }
+
+    .log-type {
+      color: #10b981;
+      margin-right: 0.5rem;
+    }
+
+    .iframe-container {
+      flex: 1;
+      padding: 1rem;
+      overflow: hidden;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .info {
+      background: #dbeafe;
+      border: 1px solid #3b82f6;
+      padding: 0.75rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      color: #1e40af;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎯 Parent Application - HelpDesk Embedded</h1>
+    <div class="status">
+      <div class="indicator" id="indicator"></div>
+      <span id="status-text">Waiting for HelpDesk...</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="sidebar">
+      <h2>Parent App Controls</h2>
+
+      <div class="info">
+        This is a demo parent application showing how HelpDesk Pro can be embedded in an iframe.
+      </div>
+
+      <section>
+        <h3>Navigation</h3>
+        <button class="button" onclick="navigateTo('/')">Dashboard</button>
+        <button class="button" onclick="navigateTo('/tickets')">Tickets</button>
+        <button class="button" onclick="navigateTo('/operations')">Operations</button>
+        <button class="button" onclick="navigateTo('/queue')">Smart Queue</button>
+        <button class="button" onclick="navigateTo('/performance')">Performance</button>
+      </section>
+
+      <section>
+        <h3>Communication Test</h3>
+        <button class="button secondary" onclick="sendTestMessage()">Send Test Message</button>
+        <button class="button secondary" onclick="clearLog()">Clear Log</button>
+      </section>
+
+      <section>
+        <h3>Message Log</h3>
+        <div class="log" id="message-log">
+          <div class="log-entry">
+            <span class="log-time">--:--:--</span>
+            <span class="log-type">[INFO]</span>
+            Waiting for messages...
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="iframe-container">
+      <iframe 
+        id="helpdesk-iframe"
+        src="/"
+        allow="clipboard-write; clipboard-read"
+        title="HelpDesk Pro Embedded">
+      </iframe>
+    </div>
+  </div>
+
+  <script>
+    const iframe = document.getElementById('helpdesk-iframe');
+    const indicator = document.getElementById('indicator');
+    const statusText = document.getElementById('status-text');
+    const messageLog = document.getElementById('message-log');
+
+    // Listen for messages from the embedded HelpDesk app
+    window.addEventListener('message', (event) => {
+      logMessage('RECEIVED', event.data);
+
+      if (event.data.source === 'helpdesk-app') {
+        if (event.data.type === 'HELPDESK_READY') {
+          indicator.classList.add('ready');
+          statusText.textContent = 'HelpDesk Connected ✓';
+          logMessage('SUCCESS', 'HelpDesk app is ready and connected!');
+        }
+      }
+    });
+
+    // Function to navigate the embedded app
+    function navigateTo(path) {
+      iframe.contentWindow.postMessage({
+        type: 'NAVIGATE',
+        path: path
+      }, '*');
+      logMessage('SENT', { type: 'NAVIGATE', path });
+    }
+
+    // Send a test message
+    function sendTestMessage() {
+      const testMessage = {
+        type: 'TEST_MESSAGE',
+        data: 'Hello from parent app!',
+        timestamp: new Date().toISOString()
+      };
+      iframe.contentWindow.postMessage(testMessage, '*');
+      logMessage('SENT', testMessage);
+    }
+
+    // Log messages to the console area
+    function logMessage(type, data) {
+      const time = new Date().toLocaleTimeString();
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      
+      const typeColor = type === 'RECEIVED' ? '#3b82f6' : 
+                       type === 'SENT' ? '#10b981' : 
+                       type === 'SUCCESS' ? '#22c55e' : '#f59e0b';
+      
+      entry.innerHTML = `
+        <span class="log-time">${time}</span>
+        <span class="log-type" style="color: ${typeColor};">[${type}]</span>
+        <span>${typeof data === 'string' ? data : JSON.stringify(data, null, 2)}</span>
+      `;
+      
+      messageLog.appendChild(entry);
+      messageLog.scrollTop = messageLog.scrollHeight;
+
+      // Keep only last 20 entries
+      while (messageLog.children.length > 20) {
+        messageLog.removeChild(messageLog.firstChild);
+      }
+    }
+
+    // Clear log
+    function clearLog() {
+      messageLog.innerHTML = '<div class="log-entry"><span class="log-time">--:--:--</span><span class="log-type">[INFO]</span>Log cleared</div>';
+    }
+
+    // Initial log
+    logMessage('INFO', 'Parent application started');
+    logMessage('INFO', 'Loading HelpDesk app in iframe...');
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* Iframe embedding support */
+body[data-iframe-mode="true"] {
+  /* Ensure no unwanted margins/padding in iframe mode */
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Allow the app to fill the iframe container */
+#root {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Ensure scrolling works within the app when in iframe */
+body[data-iframe-mode="true"] #root {
+  display: flex;
+  flex-direction: column;
+}
